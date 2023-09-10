@@ -99,7 +99,7 @@ Syntax highlighting
 
 ```js
 var foo = function (bar) {
- return bar++;
+	return bar++;
 };
 
 console.log(foo(5));
@@ -123,13 +123,13 @@ Right aligned columns
 
 ## Images
 
-Image in the same folder: `src/content/post/markdown-elements/logo.png`
+<!-- Image in the same folder: `src/content/post/markdown-elements/logo.png` -->
 
-![Astro theme cactus logo](./logo.png)
+<!-- ![Astro theme cactus logo](./logo.png) -->
 
-Image in the aliased assets folder: `src/assets/about-astro.png`
-
-![A cartoon cactus looking at the Astro.build logo](@/assets/about-astro.png)
+<!-- Image in the aliased assets folder: `src/assets/about-astro.png` -->
+<!--
+![A cartoon cactus looking at the Astro.build logo](@/assets/about-astro.png) -->
 
 ## Links
 
