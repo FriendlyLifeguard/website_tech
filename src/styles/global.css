@@ -2,10 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-	font-family: regular;
-	src: url("/fonts/regular.otf") format("opentype");
-}
+
 
 @layer base {
 	:root {
@@ -35,5 +32,10 @@
 
 	html body {
 		@apply mx-auto flex min-h-screen max-w-3xl flex-col bg-bgColor px-8 pt-16 font-primary text-sm text-textColor antialiased;
+	}
+
+	@font-face {
+		font-family: regular;
+		src: url("/fonts/regular.otf") format("opentype");
 	}
 }
