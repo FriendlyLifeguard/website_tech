@@ -2,7 +2,7 @@
 title: "Solidity of the Day"
 description: "Function Identifiers and Signatures"
 publishDate: "14 September 2023"
-updatedDate: "14 September 2023"
+updatedDate: "15 September 2023"
 tags: ["solidity"]
 ---
 
