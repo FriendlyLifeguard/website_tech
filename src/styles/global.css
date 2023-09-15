@@ -36,6 +36,6 @@
 
 	@font-face {
 		font-family: regular;
-		src: url("/fonts/regular.otf") format("opentype");
+		src: url("/fonts/regular.otf");
 	}
 }
