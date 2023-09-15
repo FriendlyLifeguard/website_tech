@@ -6,8 +6,8 @@ import { Resvg } from "@resvg/resvg-js";
 import { siteConfig } from "@/site-config";
 import { getFormattedDate } from "@/utils";
 
-import RobotoMono from "@/assets/roboto-mono-regular.ttf";
-import RobotoMonoBold from "@/assets/roboto-mono-700.ttf";
+import regular from "/fonts/regular.otf";
+
 
 const ogOptions: SatoriOptions = {
 	width: 1200,
@@ -15,17 +15,11 @@ const ogOptions: SatoriOptions = {
 	// debug: true,
 	fonts: [
 		{
-			name: "Roboto Mono",
-			data: Buffer.from(RobotoMono),
+			name: "Berkeley Mono Regular",
+			data: Buffer.from(regular),
 			weight: 400,
 			style: "normal",
-		},
-		{
-			name: "Roboto Mono",
-			data: Buffer.from(RobotoMonoBold),
-			weight: 700,
-			style: "normal",
-		},
+		}
 	],
 };
 
