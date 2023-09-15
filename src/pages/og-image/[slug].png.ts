@@ -6,7 +6,7 @@ import { Resvg } from "@resvg/resvg-js";
 import { siteConfig } from "@/site-config";
 import { getFormattedDate } from "@/utils";
 
-import regular from "/fonts/regular.otf";
+import regular from "@/assets/regular.ttf";
 
 
 
@@ -19,8 +19,8 @@ const ogOptions: SatoriOptions = {
 		{
 			name: "Berkeley Mono Regular",
 			data: Buffer.from(regular),
-			weight: 400,
-			style: "normal",
+			weight: 100,
+			style: 'normal'
 		}
 	],
 };

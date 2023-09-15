@@ -8,7 +8,7 @@ tags: ["solidity"]
 
 Function identifiers and signatures are used by the Ethereum Virtual Machine (EVM) to correctly identify the position in the application binary interface (ABI) to accurately execute the defined and calling of functions.
 
-ABI is simply the standard format that
+ABI is simply the standard format that the EVM uses to read data at machine level. 
 
 We have a simple solidity function defined below
 
