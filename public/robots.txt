@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://alankang.xyz/sitemap-index.xml
