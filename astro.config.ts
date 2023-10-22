@@ -7,18 +7,23 @@ import prefetch from "@astrojs/prefetch";
 import remarkUnwrapImages from "remark-unwrap-images";
 // @ts-ignore:next-line
 import { remarkReadingTime } from "./src/utils/remark-reading-time.mjs";
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 // https://astro.build/config
 export default defineConfig({
 	// ! Please remember to replace the following site property with your own domain
 	site: "https://alankang.xyz",
 	markdown: {
-		remarkPlugins: [remarkUnwrapImages, remarkReadingTime],
+		remarkPlugins: [remarkUnwrapImages, remarkReadingTime, remarkMath],
 		remarkRehype: { footnoteLabelProperties: { className: [""] } },
 		shikiConfig: {
 			theme: "dracula",
 			wrap: true,
 		},
+		rehypePlugins: [
+			[rehypeKatex, {}]
+		]
 	},
 	integrations: [
 		mdx({}),

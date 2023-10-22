@@ -1,0 +1,68 @@
+---
+title: "What I have learned so far about Aptos & Move"
+description: "Gentle Introduction to Aptos Blockchain and Move"
+publishDate: "21 October 2023"
+updatedDate: ""
+tags: ["aptos", "move"]
+---
+
+## Brief History of Aptos Blockchain
+
+Aptos was original called Diem, a blockchain project created by Facebook _now Meta_. It aims to solve the existing scalability issue as well provide full modularity of smart contract design that was not offered before.
+
+_Link to [Whitepaper](https://aptos.dev/aptos-white-paper/)_
+
+### Concept of Modules, Resources and Scripts
+
+**Modules** can be seen as packages or libraries and they are created/belong-to atomically under a single account.
+
+
+
+```
+module 0xCAFE::your_contract_name {
+  // Beginning of your contract
+}
+```
+
+Generally, they can be imported by other modules and lives fully on-chain just like any other smart contracts.
+
+**Resource accounts** expands the portability of the data that is being generated from the interaction with a module.
+They can represent any arbitrary data output, common ones include tokens or NFTs.
+
+These accounts can be created by importing the native 0x1 library from [Aptos](https://aptos.dev/reference/move/?branch=devnet&page=aptos-framework/doc/resource_account.md#0x1_resource_account).
+
+**Scripts** are used to invoke functions in declared modules in addition to applying a set of logic by the caller.
+
+
+```
+script {
+  // Beginning of your script
+}
+```
+
+_Scripts and Modules follow a similar code layout/format_
+
+## Move, the Smart Contract Language on Aptos
+
+One of the coolest thing that I have personally noticed is the idea of key rotation.
+This essentially allows the developer to change the signer of an account instead of creating an entirely new account or retrieve the signer of an existing module. 
+
+This is brings so much flexibility for a smart contract developer as they don't have to keep creating new accounts or keep track of 
+accounts that possess as a signer. 
+
+As an example, if an admin account for a module  was compromised for whatever reason, the developer can quickly switch the signer of the module 
+to a different account.
+
+![Move Architecture](../image/move_architecture.png)
+
+This is possible because the data is not directly tied to specific addresses but rather they can be moved around different accounts since they are independent structures. 
+
+Data can be passed around by using specific operations for global storages which can be found [here](https://aptos.dev/move/book/global-storage-operators/#global-storage-operators-with-generics).
+
+## Random Move Facts 
+
+1. Any imported modules have to be used. If not, the compiler will throw an error.
+2. Move compilers are just as smart as rust compilers, they are generally good at explaining errors. 
+3. Move is very strict on its type and ownership system. Make sure you read the function params carefully and always check if it wants the value directly or its reference. 
+4. Arithmetic and comparison operations must be used between same integer types. If they are not, cast them to the same type! 
+5. No need to use **return** keyword, the last expression will be returned by default.   

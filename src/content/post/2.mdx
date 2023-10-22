@@ -1,0 +1,43 @@
+---
+title: "Use of & and * in Rust"
+description: "Ownership, reference/dereference in Rust"
+publishDate: "21 September 2023"
+updatedDate: "21 September 2023"
+tags: ["rust"]
+---
+
+We will be looking at how variables are declared and referenced/dereferenced in rust.
+
+<br></br>
+
+This variable is immutable and referenced variable cannot change the value of _y_
+
+```
+let x: u64 = 10
+```
+
+This variable is mutable and referenced variable can change the value of _y_
+
+```
+let mut y: u64 = 10
+```
+
+This variable has an immutable reference to _x_ therefore, it cannot be dereferenced to change its value
+
+```
+let z: &u64 = &x
+```
+
+This variable has a mutable reference to y and can change the value of _y_
+
+```
+let b: &u64 = &mut y
+```
+
+**You can also make immutable references to mutable variables**
+
+```
+let n: &u64 = &y
+```
+
+The following variable makes immutable references to _y_ therefore, intentionally declaring an immutable variable that references a mutable variable, _y_.

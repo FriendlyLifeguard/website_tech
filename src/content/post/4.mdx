@@ -1,0 +1,102 @@
+---
+layout: "../../layouts/MarkdownLayout.astro"
+
+title: "Exploring division for Felt252 type in Cairo"
+description: "Explaining the division operation for Felt252 type in Cairo"
+publishDate: "21 October 2023"
+updatedDate: ""
+tags: ["cairo", "starknet"]
+---
+
+<br></br>
+
+## Introduction to Mod and Multiplicative Inverse 
+
+In mathematics, the modulo operation finds the remainder after division of one number by another (sometimes called modulus).
+
+Here are the rules: 
+
+For $$ a \pmod b $$ 
+
+```
+1. a < b then a mod b = a 
+2. a = b then a mod b = 0 
+3. a > b then a/b = r where r is the remainder of a/b
+```
+
+The multiplicative inverse is simply : 
+
+$$ 15 * x = 1 $$
+
+This x is the multiplicative inverse of 15. 
+
+So let say we want to find the value of x of the following equation
+
+$$ 3 * x \equiv 1 \pmod{7} $$
+
+The $$ x $$ is the multiplicative inverse of $$ 3 $$  and it is equivalent to $$ 1 \pmod 7 $$
+
+Our goal is to find the value of $$ x $$ **s.t** the value of $$ (3 * x) \div 7 $$ yields the same remainder as $$ 1 \pmod 7 $$.
+
+Therefore, we can say that the value of $$ x $$ is $$ 5 $$ because $$ 3 * 5 = 15 $$ and $$ 15 \div 7 = 2 $$ with a remainder of 1 and it is equivalent to $$ 1 \pmod 7 $$.
+
+## Overview of Felt252 type in Cairo
+
+Felt252 type is a special data type that exists in the [Cairo](https://book.cairo-lang.org/title-page.html) language by [Starknet](https://starkware.co/starknet/).
+As from the name, it occupies 252 bits and is used to represent a number in the range of
+
+**#1** $$ 0 <= x < P $$
+
+where **P** is a large prime number equal to
+
+
+$$ P = 2^{251} + 17 * 2^{192} + 1 $$
+
+
+In the case of an overflow issue, it uses$$ \pmod P $$ to bring the value back to within the range.
+
+## Division Using Felt252
+
+In Cairo, every division with not nice numbers assumes that it follows the following equation:
+
+**#2** $$ \frac{x}{y} * y == x $$
+
+**Not nice numbers** =  $$ 3 \div 7 $$ , $$ 8 \div 19 $$ ...
+
+With nice numbers, the division operates normally. 
+
+**Nice numbers** = $$ 6 \div 2 $$ , $$ 10 \div 5 $$ ...
+
+As an example. equation **#2** is expanded for the operation $$ 1 \div 2 $$ accordingly to the way that the division is implemented in Cairo.
+
+**#3** $$ \frac{P+1}{2} * 2 = P + 1 \equiv 1 \pmod{P} $$ under $$\mathbb{F}_P$$
+
+Cairo implements its division over a finite field and the finite field is defined in **#1**.
+
+Therefore, every non-zero element in the finite field has a multiplicative inverse.
+
+If we reduce equation **#3**, we get:
+
+$$ {P+1} \equiv 1 \pmod{P} $$
+
+Therefore, if we summarize
+
+$$ \frac{1}{2} $$ is
+
+$$ \frac{P+1}{2} * 2 = P + 1 \equiv 1 \pmod{P} $$ under $$\mathbb{F}_P$$ which simplifies to
+
+$$ {P+1} \equiv 1 \pmod{P} $$
+
+The $$ * 2 $$ is the multiplicative inverse of $$ \frac{1}{2} $$ and $$ P $$ in $$ P + 1 $$ implies that in case of an overflow, it uses $$ \pmod P $$ to bring the value back to within the range. 
+
+And the $$ \equiv $$ implies that $$ (P + 1) $$ and $$ 1 $$ from $$ 1 \pmod P $$ will yield the same remainder when divided by $$ P $$.
+
+Therefore $$ \frac{1}{2} $$ in Cairo will be same as $$ \frac{P+1}{2} $$ 
+
+This type of division carries benefits when it comes to providing computation for cryptographic proofs.
+
+So to summarize everything, if quotient is an integer, Cairo will output the result like a normal division if not, the computation will align with equation **#2**. 
+
+Original documentation can be found [here](https://book.cairo-lang.org/ch02-02-data-types.html?highlight=integer#scalar-types).
+
+
