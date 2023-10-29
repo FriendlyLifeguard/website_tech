@@ -9,10 +9,17 @@ import remarkUnwrapImages from "remark-unwrap-images";
 import { remarkReadingTime } from "./src/utils/remark-reading-time.mjs";
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import vercel from '@astrojs/vercel/serverless';
 
 // https://astro.build/config
 export default defineConfig({
-	// ! Please remember to replace the following site property with your own domain
+	output: 'server',
+	adapter: vercel({
+		webAnalytics: {
+			enabled: true,
+		},
+	}),
+	
 	site: "https://alankang.xyz",
 	markdown: {
 		remarkPlugins: [remarkUnwrapImages, remarkReadingTime, remarkMath],
