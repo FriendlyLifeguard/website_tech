@@ -9,11 +9,11 @@ import remarkUnwrapImages from "remark-unwrap-images";
 import { remarkReadingTime } from "./src/utils/remark-reading-time.mjs";
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import vercel from '@astrojs/vercel/serverless';
+import vercel from '@astrojs/vercel/static';
 
-// https://astro.build/config
 export default defineConfig({
-	output: 'server',
+
+	output: 'static',
 	adapter: vercel({
 		webAnalytics: {
 			enabled: true,
@@ -46,6 +46,7 @@ export default defineConfig({
 			exclude: ["@resvg/resvg-js"],
 		},
 	},
+
 });
 
 function rawFonts(ext: Array<string>) {
