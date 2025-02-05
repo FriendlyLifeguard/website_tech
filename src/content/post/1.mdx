@@ -11,17 +11,17 @@ Function identifiers and signatures are used by the Ethereum Virtual Machine (EV
 ABI is a standard format that the EVM uses to read data at machine level.
 
 We have an example solidity function defined below
-
-    function add(uint a, uint b) public returns (uint){}
-
+```
+function add(uint a, uint b) public returns (uint)
+```
 The signature of the function is reduced to the following form
-
-    add(uint256,uint256)
-
+```
+add(uint256,uint256)
+```
 (In solidity, uint is automatically recognized as uint256)
 
 The function identifier is the first 4 bytes of the keccak256 hash of the function signature
-
-    keccak256("add(uint256,uint256)") = 771602f7
-
+```
+keccak256("add(uint256,uint256)") = 771602f7
+```
 The output becomes the identifier for EVM to find and execute the function according to the ABI.
