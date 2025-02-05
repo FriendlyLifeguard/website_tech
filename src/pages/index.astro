@@ -12,11 +12,14 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS);
 
 <PageLayout meta={{ title: "Home" }}>
 	<section>
+		<h1 class="title mb-3">Hi, I'm Alan. I contribute to open source projects and passionate about writing anything related to crypto. </h1>
+	</section>
+	<section>
 		<h1 class="title mb-6"></h1>
 		<SocialList />
 	</section>
 	<section aria-label="Blog post list" class="mt-16">
-		<h2 class="title mb-4 text-xl">Posts</h2>
+		<h2 class="title mb-4 text-2xl">Posts</h2>
 		<ul class="space-y-4 sm:space-y-2">
 			{
 				allPostsByDate.map((p) => (
@@ -26,6 +29,180 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS);
 				))
 			}
 		</ul>
+	</section>
+	<section aria-label="List of Contributions" class="mt-16">
+		<h2 class="title mb-6 text-2xl font-bold">Contributions</h2>
+		
+		<div class="space-y-6">
+			<div class="rounded-lg bg-accent/10 p-6 transition-all hover:shadow-md hover:translate-y-[-2px] duration-300">
+				<h3 class="font-semibold mb-2 text-lg text-accent border-b border-accent/20 pb-2">Cairo Book</h3>
+				<ul class="list-disc pl-4 space-y-2">
+					<li>
+						<a href="https://github.com/cairo-book/cairo-book/pull/902" 
+						   class="hover:text-accent transition-colors duration-200 flex items-center gap-2 group">
+							<span>Added Syscall for sha256 in Syscall Appendix</span>
+							<svg class="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" 
+								 xmlns="http://www.w3.org/2000/svg" 
+								 fill="none" 
+								 viewBox="0 0 24 24" 
+								 stroke="currentColor">
+								<path stroke-linecap="round" 
+									  stroke-linejoin="round" 
+									  stroke-width="2" 
+									  d="M13 7l5 5m0 0l-5 5m5-5H6" />
+							</svg>
+						</a>
+					</li>
+					<li>
+						<a href="https://github.com/cairo-book/cairo-book/pull/871" 
+						   class="hover:text-accent transition-colors duration-200 flex items-center gap-2 group">
+							<span>Added Recursion and loop explanation</span>
+							<svg class="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" 
+								 xmlns="http://www.w3.org/2000/svg" 
+								 fill="none" 
+								 viewBox="0 0 24 24" 
+								 stroke="currentColor">
+								<path stroke-linecap="round" 
+									  stroke-linejoin="round" 
+									  stroke-width="2" 
+									  d="M13 7l5 5m0 0l-5 5m5-5H6" />
+							</svg>
+						</a>
+					</li>
+					<li>
+						<a href="https://github.com/cairo-book/cairo-book/pull/938" 
+						   class="hover:text-accent transition-colors duration-200 flex items-center gap-2 group">
+							<span>Reworked copy trait explanation</span>
+							<svg class="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" 
+								 xmlns="http://www.w3.org/2000/svg" 
+								 fill="none" 
+								 viewBox="0 0 24 24" 
+								 stroke="currentColor">
+								<path stroke-linecap="round" 
+									  stroke-linejoin="round" 
+									  stroke-width="2" 
+									  d="M13 7l5 5m0 0l-5 5m5-5H6" />
+							</svg>
+						</a>
+					</li>
+					<li>
+						<a href="https://github.com/cairo-book/cairo-book/pull/959" 
+						   class="hover:text-accent transition-colors duration-200 flex items-center gap-2 group">
+							<span>Reworked byte array description</span>
+							<svg class="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" 
+								 xmlns="http://www.w3.org/2000/svg" 
+								 fill="none" 
+								 viewBox="0 0 24 24" 
+								 stroke="currentColor">
+								<path stroke-linecap="round" 
+									  stroke-linejoin="round" 
+									  stroke-width="2" 
+									  d="M13 7l5 5m0 0l-5 5m5-5H6" />
+							</svg>
+						</a>
+					</li>
+					<li>
+						<a href="https://github.com/cairo-book/cairo-book/pull/754" 
+						   class="hover:text-accent transition-colors duration-200 flex items-center gap-2 group">
+							<span>Added smart contract testing section</span>
+							<svg class="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" 
+								 xmlns="http://www.w3.org/2000/svg" 
+								 fill="none" 
+								 viewBox="0 0 24 24" 
+								 stroke="currentColor">
+								<path stroke-linecap="round" 
+									  stroke-linejoin="round" 
+									  stroke-width="2" 
+									  d="M13 7l5 5m0 0l-5 5m5-5H6" />
+							</svg>
+						</a>
+					</li>
+					<li>
+						<a href="https://github.com/cairo-book/cairo-book/pull/544" 
+						   class="hover:text-accent transition-colors duration-200 flex items-center gap-2 group">
+							<span>Syntax fix in dispatcher-library section</span>
+							<svg class="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" 
+								 xmlns="http://www.w3.org/2000/svg" 
+								 fill="none" 
+								 viewBox="0 0 24 24" 
+								 stroke="currentColor">
+								<path stroke-linecap="round" 
+									  stroke-linejoin="round" 
+									  stroke-width="2" 
+									  d="M13 7l5 5m0 0l-5 5m5-5H6" />
+							</svg>
+						</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="rounded-lg bg-accent/10 p-6 transition-all hover:shadow-md hover:translate-y-[-2px] duration-300">
+				<h3 class="font-semibold mb-2 text-lg text-accent border-b border-accent/20 pb-2">Orion</h3>
+				<ul class="list-disc pl-4 space-y-2">
+					<li>
+						<a href="https://github.com/gizatechxyz/orion/pull/528" 
+						   class="hover:text-accent transition-colors duration-200 flex items-center gap-2 group">
+							<span>Implemented ReduceLogSumExp operator</span>
+							<svg class="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" 
+								 xmlns="http://www.w3.org/2000/svg" 
+								 fill="none" 
+								 viewBox="0 0 24 24" 
+								 stroke="currentColor">
+								<path stroke-linecap="round" 
+									  stroke-linejoin="round" 
+									  stroke-width="2" 
+									  d="M13 7l5 5m0 0l-5 5m5-5H6" />
+							</svg>
+						</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="rounded-lg bg-accent/10 p-6 transition-all hover:shadow-md hover:translate-y-[-2px] duration-300">
+				<h3 class="font-semibold mb-2 text-lg text-accent border-b border-accent/20 pb-2">StarknetBook</h3>
+				<ul class="list-disc pl-4 space-y-2">
+					<li>
+						<a href="https://github.com/starknet-edu/starknetbook/pull/369" 
+						   class="hover:text-accent transition-colors duration-200 flex items-center gap-2 group">
+							<span>Updated Chapter Starknet-js: Javascript SDK section</span>
+							<svg class="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" 
+								 xmlns="http://www.w3.org/2000/svg" 
+								 fill="none" 
+								 viewBox="0 0 24 24" 
+								 stroke="currentColor">
+								<path stroke-linecap="round" 
+									  stroke-linejoin="round" 
+									  stroke-width="2" 
+									  d="M13 7l5 5m0 0l-5 5m5-5H6" />
+							</svg>
+						</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="rounded-lg bg-accent/10 p-6 transition-all hover:shadow-md hover:translate-y-[-2px] duration-300">
+				<h3 class="font-semibold mb-2 text-lg text-accent border-b border-accent/20 pb-2">Ekubo</h3>
+				<ul class="list-disc pl-4 space-y-2">
+					<li>
+						<a href="https://github.com/EkuboProtocol/starknet-indexer/pull/21" 
+						   class="hover:text-accent transition-colors duration-200 flex items-center gap-2 group">
+							<span>Generate candlestick data from oracle_snapshots table</span>
+							<svg class="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" 
+								 xmlns="http://www.w3.org/2000/svg" 
+								 fill="none" 
+								 viewBox="0 0 24 24" 
+								 stroke="currentColor">
+								<path stroke-linecap="round" 
+									  stroke-linejoin="round" 
+									  stroke-width="2" 
+									  d="M13 7l5 5m0 0l-5 5m5-5H6" />
+							</svg>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
 	</section>
 
 </PageLayout>
