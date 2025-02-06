@@ -1,6 +1,5 @@
 ---
 import ThemeToggle from "../ThemeToggle.astro";
-import Search from "../Search.astro";
 import { menuLinks } from "@/site-config";
 
 const url = new URL(Astro.request.url);
@@ -31,7 +30,7 @@ const url = new URL(Astro.request.url);
 
 <header
 	id="main-header"
-	class="group relative mb-28 flex"
+	class="group relative mb-28 flex items-center justify-between"
 	transition:persist
 >
 	<div class="flex sm:flex-col">
@@ -61,15 +60,17 @@ const url = new URL(Astro.request.url);
 			}
 		</nav>
 	</div>
-	<Search />
-	<ThemeToggle />
-	<button
-		id="toggle-navigation-menu"
-		class="group relative ms-4 h-7 w-7 sm:invisible sm:hidden"
-		type="button"
-		aria-label="Open main menu"
-		aria-expanded="false"
-		aria-haspopup="menu"
-	>
-	</button>
+
+	<div class="flex items-center gap-4">
+		<ThemeToggle />
+		<button
+			id="toggle-navigation-menu"
+			class="group relative h-7 w-7 sm:invisible sm:hidden"
+			type="button"
+			aria-label="Open main menu"
+			aria-expanded="false"
+			aria-haspopup="menu"
+		>
+		</button>
+	</div>
 </header>
