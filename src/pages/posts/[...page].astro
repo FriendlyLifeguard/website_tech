@@ -8,7 +8,9 @@ import Pagination from "@/components/Paginator";
 import { getUniqueTags, sortMDByDate } from "@/utils";
 
 export const getStaticPaths = (async ({ paginate }) => {
-	const allPosts = await getCollection("post");
+	const allPosts = await getCollection("post", ({ data }) => {
+		return !data.draft;  // Only get non-draft posts
+	});
 	const allPostsByDate = sortMDByDate(allPosts);
 	const uniqueTags = getUniqueTags(allPosts);
 	return paginate(allPostsByDate, { props: { uniqueTags }, pageSize: 10 });

@@ -1,14 +1,16 @@
 ---
 import PageLayout from "@/layouts/Base";
-import { getUniqueTagsWithCount } from "@/utils";
 import { getCollection } from "astro:content";
+import { getUniqueTagsWithCount } from "@/utils";
 
-const allPosts = await getCollection("post");
+const allPosts = await getCollection("post", ({ data }) => {
+	return !data.draft;  // Only get non-draft posts
+});
 const allTags = getUniqueTagsWithCount(allPosts);
 
 const meta = {
 	title: "All Tags",
-	description: "A list of all the topics I've written about in my posts",
+	description: "All tags from my blog posts",
 };
 ---
 
@@ -16,19 +18,17 @@ const meta = {
 	<h1 class="title mb-6">Tags</h1>
 	<ul class="space-y-4">
 		{
-			allTags.map(([tag, val]) => (
-				<li class="flex items-center gap-x-2">
+			Array.from(allTags).map(([tag, count]) => (
+				<li class="flex items-center gap-2">
 					<a
 						class="cactus-link inline-block"
 						href={`/tags/${tag}/`}
 						title={`View posts with the tag: ${tag}`}
 						rel="prefetch"
 					>
-						&#35;{tag}
+						{tag}
 					</a>
-					<span class="inline-block">
-						- {val} Post{val > 1 && "s"}
-					</span>
+					<span class="inline-block">({count})</span>
 				</li>
 			))
 		}
