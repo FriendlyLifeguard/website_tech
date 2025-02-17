@@ -20,21 +20,61 @@ However, under PoS consensus, network participants have transitioned from active
 
 ## Introduction to Validators
 
-Validator is a new role that didn't exist previously in PoW consensus. To be able to become a validator, you need to deposit/stake 32 ETH into a Beacon Chain client. *([Guide](https://launchpad.ethereum.org/en/) to get started on becoming a validator.)*
+Validator is a new role that didn't exist previously in PoW consensus. To be able to become a validator, you need to deposit/stake 32 ETH into a Beacon Chain client. ([Guide](https://launchpad.ethereum.org/en/) to get started on becoming a validator.)
 
-In Beacon Chain, blocks can be organized into slots and epochs. A slot appears every 12 seconds and an epoch contains 32 slots (appears every 6.4 minutes) and it is used to create checkpoints to reach block/transaction finality which will get into it in later sections.
+In Beacon Chain, passage of time is organized into slots and epochs. A slot appears every 12 seconds and an epoch contains 32 slots (appears every 6.4 minutes) and it is used to create checkpoints to reach block/transaction finality which will get into it in later sections.
 
 ![slot_epoch](../image/eth2.0_basics/epoch_slots.png)
 
-From the active pool of validators, a subset of validators can become either part of a committee or a block proposer. Both selection processes are pseudorandom and determined by RANDAO. 
+From the active pool of validators, a subset of validators can become either part of a committee or a block proposer or both! The selection processes are pseudorandom and determined by RANDAO. 
 
-1. If a validator becomes a block proposer, the validator can propose a new block on the designated slot however, an empty slot can exist in case the block proposer is inactive and the validator is not penalized for not proposing a block.
+1. If a validator becomes a block proposer, the validator can propose a new block on the designated slot however, an empty slot can exist if the block proposer is inactive. (The validator is not penalized for not proposing a block.)
 
 2. If a validator becomes part of a committee, each committee is delegated to each slot within an epoch to attest on the proposed block. More than one committee can exist in each slot. 
 
 ![randao](../image/eth2.0_basics/randao.png)
  
 The assignments of committees and block proposer selection happens before an epoch starts. Specifically, they are determined at the end of previous epoch. 
+
+## Achieving Decentralized Randomness with RANDAO 
+
+On Beacon Chain, the role of RANDAO value is critical as it is used to determine the selection of committees and block proposers for each upcoming epochs. 
+
+This value is determined by the following steps.
+
+1. The block proposer in each slot goes through the process of **revealing** and **mixing**. 
+- revealing: Revealing is a process of using a BLS signature scheme to create a signature in the current slot. The signature takes in message (current epoch number) and the validator's secret key. The signature is our RANDAO value. 
+- mixing: We first verify whether the signature was actually created by the validator. This is possible by taking block proposer's public key, message and signature. If the signature is valid, we mix the value with the previous RANDAO value. This is done by doing a xor operation between previous RANDAO value and current revealed RANDAO value. 
+
+The formula on mixing operation is : 
+
+$$ Rn = Rn \oplus Bn-1  $$
+
+Where, 
+
+- $$ Rn $$ is the most recent revealed RANDAO value 
+- $$ Bn-1 $$ is the RANDAO value after $$ n $$ contributions 
+
+This process happens from slot 0 to 31 for each epoch and the final value in slot 31 is our RANDAO value which will be used to select the block proposer and committees for the next epoch.
+
+![randao_explanation](../image/eth2.0_basics/randao_explanation.svg)
+
+Thus, the process of each block proposer revealing and mixing RANDAO value achieves decentralized randomness with high entropy (256 bit from secret key). However, this process can be vulnerable to a potential attack vector. 
+
+### Example of Attack Vector
+
+For this attack, assume that the Beacon Chain used hashing instead of xor operation to mix their RANDAO value. 
+
+Given a scenario where an entity controls the last three block proposers (validators) as shown below. 
+
+![randao_attack](../image/eth2.0_basics/randao_attack.svg)
+
+
+With these three block proposers, the malicious entity can commit to a **participation based attack** that can alter and precompute the RANDAO value to their favor.
+
+
+
+
 
 
 ## Attesting and Reaching Finality 
@@ -53,6 +93,8 @@ Two types of attestations:
 ## Types of Slashable Events 
 
 
+
+
 ## Sources
 
 https://ethos.dev/beacon-chain#staking-rewards-and-penalties
@@ -66,4 +108,6 @@ https://bitcoin.org/bitcoin.pdf
 https://consensys.io/blog/the-ethereum-2-0-beacon-chain-explained
 
 https://kb.beaconcha.in/ethereum-staking/rewards-and-penalties
+
+https://eth2book.info/capella/part2/building_blocks/randomness/
 
