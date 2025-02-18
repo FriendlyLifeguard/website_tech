@@ -3,7 +3,7 @@ title: "Pure Basics of Ethereum 2.0"
 description: "Must know things about Ethereum 2.0"
 publishDate: "2025-02-13"
 tags: ["ethereum", "consensus"]
-draft: true
+draft: false
 ---
 
 After Ethereum transitioned from Proof of Work (PoW) to Proof of Stake (PoS) in September 2022, a lot of things have changed on the consensus layer.
@@ -80,7 +80,7 @@ However, this attack vector has been mitigated by using xor operation instead of
 
 If we refer to the <a href="https://github.com/ethereum/consensus-specs/blob/9d1e7087b3d0e5d3861b67dcf932158e26332fe3/specs/phase0/beacon-chain.md?plain=1#L1729-L1741" target="_blank">mix operation</a>:
 
-```
+```python
 def process_randao(state: BeaconState, body: BeaconBlockBody) -> None:
     epoch = get_current_epoch(state)
     # Verify RANDAO reveal
