@@ -44,7 +44,7 @@ const { headings } = await post.render();
 		<article class="flex-grow break-words" data-pagefind-body>
 			<div id="blog-hero"><BlogHero content={post} /></div>
 			<div
-				class="prose prose-sm prose-cactus mt-12 prose-headings:font-semibold prose-headings:text-accent-2 prose-headings:before:absolute prose-headings:before:-ms-4 prose-headings:before:text-accent prose-headings:before:content-['#'] prose-th:before:content-none"
+				class="prose prose-sm prose-cactus mt-12 max-w-[150ch] prose-headings:font-semibold prose-headings:text-accent-2 prose-headings:before:absolute prose-headings:before:-ms-4 prose-headings:before:text-accent prose-headings:before:content-['#'] prose-th:before:content-none prose-img:max-w-[600px] prose-img:mx-auto prose-a:text-blue-500 prose-a:decoration-none hover:prose-a:decoration-underline prose-a:after:content-['_↗'] prose-a:after:text-xs prose-a:after:font-bold prose-blockquote:text-inherit prose-blockquote:font-normal prose-blockquote:not-italic prose-blockquote:border-l-accent/30"
 			>
 				<slot />
 			</div>
