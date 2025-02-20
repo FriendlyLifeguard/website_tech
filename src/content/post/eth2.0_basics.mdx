@@ -1,5 +1,5 @@
 ---
-title: "Pure Basics of Ethereum 2.0"
+title: "Introduction to Beacon Chain with a Focus on RANDAO"
 description: "Must know things about Ethereum 2.0"
 publishDate: "2025-02-13"
 tags: ["ethereum", "consensus"]
@@ -16,69 +16,60 @@ Let dive in!
 
 Under PoW consensus, network participants were known as **miners** that raced to generate a unique hash with a fixed length of leading zeros to be able to add a new block to the blockchain. This required active usage of ASICs or GPUs which lead to high energy consumption.
 
-However, under PoS consensus, network participants have transitioned from actively generating millions of hashes to voting and proposing new blocks all under algorithmic control. These participants are called **validators**. This transition from PoW to PoS lead to reduction in energy consumption by 99.9% which helped in diminishing the negative sentiment of blockchain technology. ([source](https://cointelegraph.com/news/the-merge-brings-down-ethereum-s-network-power-consumption-by-over-99-9))
+However, under PoS consensus, network participants have transitioned from actively generating millions of hashes to voting and proposing new blocks all under algorithmic control. These participants are called **validators**. This transition from PoW to PoS lead to reduction in energy consumption by 99.9%. ([source](https://cointelegraph.com/news/the-merge-brings-down-ethereum-s-network-power-consumption-by-over-99-9))
 
 ## Introduction to Validators
 
 Validator is a new role that didn't exist previously in PoW consensus. To be able to become a validator, you need to deposit/stake 32 ETH into a Beacon Chain client. (<a href="https://launchpad.ethereum.org/en/" target="_blank">Guide</a> to get started on becoming a validator.)
 
-In Beacon Chain, passage of time is organized into slots and epochs. A slot appears every 12 seconds and an epoch contains 32 slots (appears every 6.4 minutes) and it is used to create checkpoints to reach block/transaction finality which will get into it in later sections.
+On Beacon Chain, passage of time is organized into slots and epochs. A slot appears every 12 seconds and an epoch contains 32 slots (appears every 6.4 minutes) and it is used to create checkpoints to reach block/transaction finality which will get into it in later sections.
 
 ![slot_epoch](../image/eth2.0_basics/epoch_slots.png)
 
 From the active pool of validators, a subset of validators can become either part of a committee or a block proposer or both! The selection processes are pseudorandom and determined by RANDAO.
 
-1. If a validator becomes a block proposer, the validator can propose a new block on the designated slot however, an empty slot can exist if the block proposer is inactive. (The validator is not penalized for not proposing a block.)
+1. If a validator becomes a block proposer, the validator can propose a new block on the designated slot however, an empty slot can exist if the block proposer is inactive. (The validator is not penalized for not proposing a block but it will miss out on the rewards.)
 
-2. If a validator becomes part of a committee, each committee is delegated to a slot within an epoch to attest on the proposed block. More than one committee can exist in each slot.
+2. If a validator becomes part of a committee, each committee is delegated to a slot within an epoch to attest on the proposed block. 
+- *A validator can only be part of one committee per epoch.*
+- *More than one committee can exist in each slot.*
+- *All committees are the same size and have at least 128 validators.*
 
 ![randao](../image/eth2.0_basics/randao.png)
 
-The assignments of committees and block proposer selection happens before a new epoch starts. Specifically, they are determined at the end of previous epoch.
+The assignment of committees happens before a new epoch starts while block proposers are assigned once the epoch starts. 
 
-## Achieving Decentralized Randomness with RANDAO
+Next, we will dive into the role of RANDAO which is used to select block proposers and committees.
 
-_Please note that I abbreviated a lot of the cryptography that goes into the RANDAO process. I made this choice to simplify and streamline the explanation. For more details, please refer to the [in-depth explanation](https://eth2book.info/capella/part2/building_blocks/randomness/) written by Ben Edgington._
+## Achieving Decentralized Pseudorandomness with RANDAO
+
+_Please note that I abbreviated a lot of details that goes into the RANDAO process. I made this choice to simplify and streamline the explanation. To learn more, please refer to the <a href="https://eth2book.info/capella/part2/building_blocks/randomness/" target="_blank">in-depth explanation</a> written by Ben Edgington._
+
+<br/>
 
 On Beacon Chain, the role of RANDAO value is critical as it is used to determine the selection of committees and block proposers for each upcoming epochs.
 
-This value is determined by the following steps.
+The RANDAO value goes through a series of reveal and mix process for each slot by the block proposer.  
+- *A block proposer is revealing and mixing their RANDAO value while also proposing a block.*
+- *If a block proposer does not propose a block, it also does not contribute to the RANDAO value.*
 
-1. The block proposer in each slot goes through the process of **revealing** and **mixing**.
+Revealing is simply the block proposer crafting a new RANDAO value in the proposed slot
 
-- revealing: Revealing is a process of using a BLS signature scheme to create a signature in the current slot. The signature takes in message (current epoch number) and the validator's secret key. The signature is our RANDAO value.
-- mixing: We first verify whether the signature was actually created by the validator. This is possible by taking block proposer's public key, message and signature. If the signature is valid, we mix the value with the previous RANDAO value. This is done by doing a xor operation between previous RANDAO value and current revealed RANDAO value.
+- <a href="https://github.com/ethereum/consensus-specs/blob/7480d0334fd81cd029bc85b38c5c7bdc2967acbf/specs/phase0/validator.md?plain=1#L324-L329" target="_blank">Revealing</a>: Revealing is a process of using a BLS signature scheme to create a signature in the current slot. The signature takes in message (current epoch number) and the block proposer's secret key. The resulting signature is our RANDAO value. The last block proposer in each epoch finalizes the RANDAO value that will be used to elect block proposers and committees for the next epoch.
 
-The formula on mixing operation is :
 
-$$ Rn = Rn \oplus Bn-1 $$
+```python
+def get_epoch_signature(state: BeaconState, block: BeaconBlock, privkey: int) -> BLSSignature:
+    domain = get_domain(state, DOMAIN_RANDAO, compute_epoch_at_slot(block.slot))
+    signing_root = compute_signing_root(compute_epoch_at_slot(block.slot), domain)
+    return bls.Sign(privkey, signing_root)
+```
 
-Where,
+<br/>
 
-- $$ Rn $$ is the most recent revealed RANDAO value
-- $$ Bn-1 $$ is the RANDAO value after $$ n $$ contributions
+Mixing is the process of combining the current slot's RANDAO value with the previous mixed RANDAO value. Each block proposer collectively contributes to shuffling the RANDAO value which leads to a fair, decentralized way of electing block proposers and commitees on the next epoch.  
 
-This process happens from slot 0 to 31 for each epoch and the final value in slot 31 is used to select the block proposer and committees for the next epoch.
-
-![randao_explanation](../image/eth2.0_basics/randao_explanation.svg)
-
-Thus, the process of each block proposer revealing and mixing RANDAO value achieves decentralized randomness with high entropy (256 bit from secret key). However, this process can be vulnerable to a potential attack vector.
-
-### Example of Attack Vector
-
-For this attack, assume that the Beacon Chain used hashing instead of xor operation to mix their RANDAO value.
-
-Given a scenario where an entity controls the last three block proposers (validators) as shown below.
-
-![randao_attack](../image/eth2.0_basics/randao_attack.svg)
-
-With these three block proposers controlled by the same entity, the entity can commit to a **participation based attack** that can precompute the RANDAO value to their favor.
-
-The entity has access to the private key of the last three elected block proposers. This gives the opportunity to "grind" the best RANDAO value by either proposing a block or not. The entity has access to the private key to these validators therefore, the entity can simulate the reveal and mix operation to precompute the best RANDAO value.
-
-However, this attack vector has been mitigated by using xor operation instead of hashing to mix the RANDAO value. The consensus takes advantage of the commutative property of xor operation that takes away the grinding opportunity that otherwise exists in the hashing operation.
-
-If we refer to the <a href="https://github.com/ethereum/consensus-specs/blob/9d1e7087b3d0e5d3861b67dcf932158e26332fe3/specs/phase0/beacon-chain.md?plain=1#L1729-L1741" target="_blank">mix operation</a>:
+- <a href="https://github.com/ethereum/consensus-specs/blob/9d1e7087b3d0e5d3861b67dcf932158e26332fe3/specs/phase0/beacon-chain.md?plain=1#L1729-L1741">Mixing </a>: Before mixing, we first verify whether the signature was actually created by the validator. This is possible by taking block proposer's public key, message and signature. If the signature is valid, we do xor operation between the current revealed RANDAO value with the previous mixed RANDAO value.
 
 ```python
 def process_randao(state: BeaconState, body: BeaconBlockBody) -> None:
@@ -90,12 +81,60 @@ def process_randao(state: BeaconState, body: BeaconBlockBody) -> None:
     # Mix in RANDAO reveal
     mix = xor(get_randao_mix(state, epoch), hash(body.randao_reveal))
     state.randao_mixes[epoch % EPOCHS_PER_HISTORICAL_VECTOR] = mix
-
 ```
 
-The last two line shows us how the mix operation is done.
+<br/>
 
-Let's assume the entity controls the last two validators $$ v_1, v_2 $$ and the previous RANDAO value is $$ x $$ from slot 29.
+So to summarize, from slot 0 to 31, each block proposer reveals a RANDAO value and it fetches the previous mixed RANDAO value and does xor operation with the current revealed RANDAO value. The RANDAO value in the last slot (slot 31) or the most recent slot with proposed block in the current epoch is used to select the block proposer and committees for the next epoch. 
+
+![randao_explanation](../image/eth2.0_basics/randao_explanation.svg)
+
+Thus, the process of each block proposer revealing and mixing RANDAO value achieves decentralized pseudorandomness with high entropy (256 bit from secret key). 
+
+As always, the RANDAO process is not always perfect. We will look into a particular change that RANDAO underwent to improve the process.
+
+### RANDAO Limitation and Mitigation
+
+Let's look at a situation where Bob controls two validators that were chosen to be last two block proposers in an epoch (slot 30 and 31). Bob wants to precompute the best RANDAO value to his favor. 
+
+Bob can precompute the best RANDAO value by: 
+
+*Not proposing a block means that the RANDAO value remains unchanged* 
+
+1. Proposing a block in both slot 30 and 31.
+2. Proposing a block in slot 30 and not in slot 31 (Missing out reward in slot 31).
+3. Proposing a block in slot 31 and not in slot 30 (Missing out reward in slot 30).
+4. Not proposing a block in either slot 30 or 31 (Missing out reward in both slots).
+
+In the case for #1, it is possible that if the order of validator is flipped, the final RANDAO value can be completely different. This might be an issue if Bob's two validators becomes part of the last two block proposers again but in the flipped order. This allows Bob to precompute a completely new set of RANDAO values that can favor him.  
+
+However, the RANDAO limits the randomness by utilizing xor operation in the mixing process instead of hash operation to take advantage of its commutative property.
+
+Justin mentions this example in a <a href="https://github.com/ethereum/consensus-specs/pull/496" target="_blank">discussion</a> that ultimately lead to reverting the mix operation to using xor operation instead of hash. 
+
+If we refer to the function again, 
+
+```python
+def process_randao(state: BeaconState, body: BeaconBlockBody) -> None:
+    epoch = get_current_epoch(state)
+    # Verify RANDAO reveal
+    proposer = state.validators[get_beacon_proposer_index(state)]
+    signing_root = compute_signing_root(epoch, get_domain(state, DOMAIN_RANDAO))
+    assert bls.Verify(proposer.pubkey, signing_root, body.randao_reveal)
+    # Mix in RANDAO reveal
+    mix = xor(get_randao_mix(state, epoch), hash(body.randao_reveal))
+    state.randao_mixes[epoch % EPOCHS_PER_HISTORICAL_VECTOR] = mix
+```
+
+We can see from the last two lines that the mix operation uses xor operation on previous mixed RANDAO value and the current revealed RANDAO value. (We still utilize hash operation to reduce the size of the <a href="https://eth2book.info/capella/part2/building_blocks/randomness/#updating-the-randao:~:text=Second%2C%20the%20hash,of%20BLS%20signatures" target="_blank">revealed RANDAO value</a> from 768 bits to 256 bits.)
+
+Let's look at an example to get a better understanding of why xor operation is better. 
+
+### Hash vs XOR
+
+Let's assume the entity controls the last two validators $$ v_1, v_2 $$ and the previous RANDAO value is $$ x $$ from slot 29. 
+
+We also assume that the entity can have block proposers in flipped order. ($$ v_2 $$ in slot 30 and $$ v_1 $$ in slot 31) 
 
 ![randao_example](../image/eth2.0_basics/randao_example.svg)
 If we used hashing exclusively, there can be multiple unique RANDAO values:
@@ -110,7 +149,7 @@ $$ hash(w, hash(reveal(v_1))) = p $$
 
 As you can see, when the order is flipped, it generates completely new RANDAO values.
 
-However, with xor operation, the result is same regardless of the order. (Here, we still utilize hash operation to reduce the size of the <a href="https://eth2book.info/capella/part2/building_blocks/randomness/#updating-the-randao:~:text=Second%2C%20the%20hash,of%20BLS%20signatures" target="_blank">aggregated signature</a> from 768 bits to 256 bits).
+However, with xor operation, the result is same regardless of the order. 
 
 Original order:
 $$ xor(x, hash(reveal(v_1))) = a $$
@@ -118,17 +157,17 @@ $$ xor(a, hash(reveal(v_2))) = b $$
 
 Flipped order:
 $$ xor(x, hash(reveal(v_2))) = b $$
-$$ xor(x, hash(reveal(v_1))) = a $$
+$$ xor(b, hash(reveal(v_1))) = a $$
 
-The result retains the commutative property.
+The xor example retains the commutative property.
 
-Of course, the entity can still generate multiple unique RANDAO values by selectively not participating in a particular slot. However, xor's commutative property greatly reduces the entropy for generating multiple unique RANDAO values.
-
-_Refer to the <a href="https://github.com/ethereum/consensus-specs/pull/496" target="_blank"> official discussion </a> to see the details on how the xor operation was chosen instead of just using the hash operation._
+Of course, the entity can still generate multiple unique RANDAO values by selectively not proposing a block in a particular slot. However, xor's commutative property causes fixed randomness regardless of the order of the validators. 
 
 ## Attesting and Reaching Finality
 
 Validators attest to a proposed block but they also attest on checkpoints. This is to ensure that past proposed blocks can reach finality which means that the blocks and its contained transactions are irreversible.
+
+
 
 This leads to two types of attestations:
 
