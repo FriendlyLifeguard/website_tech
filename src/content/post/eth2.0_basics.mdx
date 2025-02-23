@@ -10,7 +10,7 @@ After Ethereum transitioned from Proof of Work (PoW) to Proof of Stake (PoS) in 
 
 This article will highlight some of the key changes in Ethereum 2.0 or as it is called now, the Beacon Chain.
 
-Let dive in!
+Let's dive in!
 
 ## New Roles
 
@@ -50,8 +50,8 @@ _Please note that I abbreviated a lot of details that goes into the RANDAO proce
 On Beacon Chain, the role of RANDAO value is critical as it is used to determine the selection of committees and block proposers for each upcoming epochs.
 
 The RANDAO value goes through a series of reveal and mix process for each slot by the block proposer.  
-- *A block proposer is revealing and mixing their RANDAO value while also proposing a block.*
-- *If a block proposer does not propose a block, it also does not contribute to the RANDAO value.*
+- A block proposer is revealing and mixing their RANDAO value while also proposing a block.
+- If a block proposer does not propose a block, it also does not contribute to the RANDAO value.
 
 Revealing is simply the block proposer crafting a new RANDAO value in the proposed slot
 
@@ -163,16 +163,34 @@ The xor example retains the commutative property.
 
 Of course, the entity can still generate multiple unique RANDAO values by selectively not proposing a block in a particular slot. However, xor's commutative property causes fixed randomness regardless of the order of the validators. 
 
+## Supermajority
+
+The state of beacon chain is determined by attesting at least $$ 2/3 $$ of the validator's collective effective balance. Reaching this threshold is called a supermajority. This terminology is widely used to determine checkpoints 
+Given an attestation, the supermajority is the minimum number of validators that need to attest on the same block to reach finality. 
 ## Attesting and Reaching Finality
 
-Validators attest to a proposed block but they also attest on checkpoints. This is to ensure that past proposed blocks can reach finality which means that the blocks and its contained transactions are irreversible.
+Validators attest to a proposed block but they also attest on checkpoints. Checkpoints,  the first proposed block in each starting epoch, act as the anchor for the current head of the chain. If a checkpoint passes, all the proposed blocks in the previous epoch and the slot where the first block is proposed also becomes valid. In a case where if a validator does not detect any checkpoint block in upcoming epochs, it will refer to last known epoch's checkpoint (starting block of that epoch) as the current head of the chain.
 
+- If the current epoch's checkpoint passes, the previous checkpoint becomes *justified*.
+ This is basically being in a pending state and it is waiting for the next checkpoint to be passed. Once the upcoming checkpoint passes, the previous epoch's checkpoint becomes finalized and the blocks up to where the previous checkpoint attestation occurred is considered valid. 
+- It is possible that multiple epochs can refer to the same checkpoint as checkpoints in those epochs are still in justified state. 
+
+ 
+- A checkpoint is either the proposed block in the first slot for each epoch or the most recently proposed block is called a checkpoint.
+- There always exists a checkpoint in each epoch.
+- A block can be a checkpoint for multiple epochs.
+- A checkpoint accounts for the blocks in the previous epoch which means that the checkpoint that exists in the second epoch accounts for the blocks included in the first epoch. 
+- A checkpoint that is accepted by the **supermajority** becomes *justified* and once the checkpoint that comes after also passes the supermajority, the previous checkpoint becomes *finalized*. Once the checkpoint is finalized, the consensus accepts that the proposed block up to the checkpoint is considered final.
+
+The attestation to vote on a checkpoint is called a *FFG Vote* and the attestation is done by every validator assigned under the committee. 
+
+A GHOST vote is done by individual validators that are delegated to a slot when a block is proposed. 
 
 
 This leads to two types of attestations:
 
-1. Attesting on individual block within a slot (LMD Ghost Vote)
-2. Attesting on a checkpoint (FFG Vote)
+1. Attesting on individual block within a slot to determine the head of the chain (LMD Ghost Vote).
+2. Attesting on a checkpoint to reach finality of an epoch (FFG Vote).
 
 ## Types of Slashable Events
 
