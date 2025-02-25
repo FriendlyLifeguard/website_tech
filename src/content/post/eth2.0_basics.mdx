@@ -1,22 +1,23 @@
 ---
-title: "Introduction to Beacon Chain with a Focus on RANDAO"
-description: "Must know things about Ethereum 2.0"
+title: "A Gentle Introduction to Beacon Chain"
+description: "Key concepts in beacon chain"
 publishDate: "2025-02-13"
 tags: ["ethereum", "consensus"]
 draft: true
 ---
 
-After Ethereum transitioned from Proof of Work (PoW) to Proof of Stake (PoS) in September 2022, a lot of things have changed on the consensus layer.
 
-This article will highlight some of the key changes in Ethereum 2.0 or as it is called now, the Beacon Chain.
+The Merge event happened on September 15, 2022. This was a pivotal moment for Ethereum as it transitioned from Proof of Work (PoW) to Proof of Stake (PoS) consensus. The new consensus introduced a lot of changes including new roles for network participants, new ways of propagating/finalizing blocks and the idea of slashing. This article contains collection of different concepts that are important to understand the beacon chain. 
 
 Let's dive in!
 
-## New Roles
+## Major Improvements From PoW  
 
-Under PoW consensus, network participants were known as **miners** that raced to generate a unique hash with a fixed length of leading zeros to be able to add a new block to the blockchain. This required active usage of ASICs or GPUs which lead to high energy consumption.
+Under PoW consensus, network participants were known as **miners** that raced to generate a unique hash under network's <a href="https://learnmeabitcoin.com/beginners/guide/difficulty/#:~:text=The%20difficulty%20is%20a%20number,new%20blocks%20to%20the%20blockchain."   target="_blank">difficulty value.</a> Once the miner brute forces the right hash, the miner earns the opportunity to propose a block and earns a block reward if the block gets accepted. Under the PoW consensus, a block is generated every ~10 minutes and the difficulty level increases or decreases to meet this criteria. 
 
-However, under PoS consensus, network participants have transitioned from actively generating millions of hashes to voting and proposing new blocks all under algorithmic control. These participants are called **validators**. This transition from PoW to PoS lead to reduction in energy consumption by 99.9%. ([source](https://cointelegraph.com/news/the-merge-brings-down-ethereum-s-network-power-consumption-by-over-99-9))
+Over the years, the number of miners and hash rate have steadily <a href="https://www.blockchain.com/explorer/charts/hash-rate" target="_blank">increased</a> which meant that the difficulty level also increased. This lead to a higher competition for miners as they have to generate even more hashes per second to earn the right to propose a block. Generating more hashes meant that miners have to add more ASICs or GPUs which lead to an increase in energy consumption to power and maintain the machines.
+
+However, under PoS consensus, network participants have transitioned from actively generating trillions of hashes to voting and proposing new blocks all under algorithmic control. These participants are called *validators*. This transition from PoW to PoS lead to reduction in energy consumption by <a href="https://ethereum.org/en/roadmap/merge/" target="_blank">99.5%.</a>
 
 ## Introduction to Validators
 
@@ -126,42 +127,7 @@ def process_randao(state: BeaconState, body: BeaconBlockBody) -> None:
     state.randao_mixes[epoch % EPOCHS_PER_HISTORICAL_VECTOR] = mix
 ```
 
-We can see from the last two lines that the mix operation uses xor operation on previous mixed RANDAO value and the current revealed RANDAO value. (We still utilize hash operation to reduce the size of the <a href="https://eth2book.info/capella/part2/building_blocks/randomness/#updating-the-randao:~:text=Second%2C%20the%20hash,of%20BLS%20signatures" target="_blank">revealed RANDAO value</a> from 768 bits to 256 bits.)
-
-Let's look at an example to get a better understanding of why xor operation is better. 
-
-### Hash vs XOR
-
-Let's assume the entity controls the last two validators $$ v_1, v_2 $$ and the previous RANDAO value is $$ x $$ from slot 29. 
-
-We also assume that the entity can have block proposers in flipped order. ($$ v_2 $$ in slot 30 and $$ v_1 $$ in slot 31) 
-
-![randao_example](../image/eth2.0_basics/randao_example.svg)
-If we used hashing exclusively, there can be multiple unique RANDAO values:
-
-Original order:
-$$ hash(x, hash(reveal(v_1))) = y $$
-$$ hash(y, hash(reveal(v_2))) = z $$
-
-Flipped order:
-$$ hash(x, hash(reveal(v_2))) = w $$
-$$ hash(w, hash(reveal(v_1))) = p $$
-
-As you can see, when the order is flipped, it generates completely new RANDAO values.
-
-However, with xor operation, the result is same regardless of the order. 
-
-Original order:
-$$ xor(x, hash(reveal(v_1))) = a $$
-$$ xor(a, hash(reveal(v_2))) = b $$
-
-Flipped order:
-$$ xor(x, hash(reveal(v_2))) = b $$
-$$ xor(b, hash(reveal(v_1))) = a $$
-
-The xor example retains the commutative property.
-
-Of course, the entity can still generate multiple unique RANDAO values by selectively not proposing a block in a particular slot. However, xor's commutative property causes fixed randomness regardless of the order of the validators. 
+We can see from the last two lines that the mix operation uses xor operation on previous mixed RANDAO value and the current revealed RANDAO value. (We still utilize hash operation to reduce the size of the <a href="https://eth2book.info/capella/part2/building_blocks/randomness/#updating-the-randao:~:text=Second%2C%20the%20hash,of%20BLS%20signatures" target="_blank">revealed RANDAO value</a> from 768 bits to 256 bits.) 
 
 ## Supermajority
 
@@ -192,7 +158,25 @@ This leads to two types of attestations:
 1. Attesting on individual block within a slot to determine the head of the chain (LMD Ghost Vote).
 2. Attesting on a checkpoint to reach finality of an epoch (FFG Vote).
 
-## Types of Slashable Events
+## Brief Introduction to Slashing
+
+It is vital that validators attest to the right blocks and checkpoints to reach finality. To enforce that finality is always truthful, those that attest to blocks that have reached supermajority are rewarded while those attest to untruthful blocks are punished. A truthful validator can also report a malicious validator by reading on-chain events and this is known as a <a href="https://eth2book.info/capella/part2/incentives/slashing/#the-whistleblower-reward" target="_blank">whistleblower reward</a>.
+
+A malicious validator will be slashed from their total stake thus decreasing their effective balance. Lower effective balance can lead to less voting power during attestations and less chance to be selected as a block proposer.
+
+Types of slashing can include:
+
+1. Attesting to a block that is not finalized later. 
+2. Not attesting to a block (inactivity). 
+3. Proposing to more than one block.
+
+
+## Final Thoughts
+
+In this article, we discussed some of the major concepts in beacon chain and how it is more energy efficient than PoW. In particular, we took a peak at the RANDAO process and BLS signature scheme that is used to compute and mix RANDAO values. Lastly, we briefly went over how beacon chain reaches finality through checkpoints and the consequence to validators who attest to untruthful blocks. 
+
+This is my first time writing about consensus mechanism and I'm hoping to dive deeper into each individual section that I mentioned in this article in future articles. 
+
 
 ## Sources
 
@@ -211,3 +195,5 @@ https://kb.beaconcha.in/ethereum-staking/rewards-and-penalties
 https://eth2book.info/capella/part2/building_blocks/randomness/
 
 https://github.com/ethereum/consensus-specs/pull/496
+
+https://ethereum.org/en/roadmap/merge/
