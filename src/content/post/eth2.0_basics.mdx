@@ -3,7 +3,7 @@ title: "A Gentle Introduction to Beacon Chain"
 description: "Key concepts in beacon chain"
 publishDate: "2025-02-13"
 tags: ["ethereum", "consensus"]
-draft: true
+draft: false
 ---
 
 
@@ -13,17 +13,17 @@ Let's dive in!
 
 ## Major Improvements From PoW  
 
-Under PoW consensus, network participants were known as **miners** that raced to generate a unique hash under network's <a href="https://learnmeabitcoin.com/beginners/guide/difficulty/#:~:text=The%20difficulty%20is%20a%20number,new%20blocks%20to%20the%20blockchain."   target="_blank">difficulty value.</a> Once the miner brute forces the right hash, the miner earns the opportunity to propose a block and earns a block reward if the block gets accepted. Under the PoW consensus, a block is generated every ~10 minutes and the difficulty level increases or decreases to meet this criteria. 
+Under PoW consensus, network participants were known as *miners* that raced to generate a unique hash under network's <a href="https://learnmeabitcoin.com/beginners/guide/difficulty/#:~:text=The%20difficulty%20is%20a%20number,new%20blocks%20to%20the%20blockchain."   target="_blank">difficulty value.</a> Once the miner brute forces the right hash, the miner earns the opportunity to propose a block and earns a block reward if the block gets accepted. Under the PoW consensus, a block is generated every ~10 minutes and the difficulty level increases or decreases to meet this criteria. 
 
-Over the years, the number of miners and hash rate have steadily <a href="https://www.blockchain.com/explorer/charts/hash-rate" target="_blank">increased</a> which meant that the difficulty level also increased. This lead to a higher competition for miners as they have to generate even more hashes per second to earn the right to propose a block. Generating more hashes meant that miners have to add more ASICs or GPUs which lead to an increase in energy consumption to power and maintain the machines.
+Over the years, the number of miners and its respective hash rate have steadily <a href="https://www.blockchain.com/explorer/charts/hash-rate" target="_blank">increased</a> which meant that the difficulty level also increased. This lead to a higher competition for miners as they have to generate even more hashes per second to earn the right to propose a block. Generating more hashes meant that miners have to add more ASICs or GPUs which lead to an increase in energy consumption to power and maintain the machines.
 
-However, under PoS consensus, network participants have transitioned from actively generating trillions of hashes to voting and proposing new blocks all under algorithmic control. These participants are called *validators*. This transition from PoW to PoS lead to reduction in energy consumption by <a href="https://ethereum.org/en/roadmap/merge/" target="_blank">99.5%.</a>
+However, under PoS consensus, network participants have transitioned from actively generating trillions of hashes to attesting and proposing new blocks all under algorithmic control. These participants are called *validators*. This transition from PoW to PoS lead to reduction in energy consumption by <a href="https://ethereum.org/en/roadmap/merge/" target="_blank">99.5%.</a>
 
 ## Introduction to Validators
 
-Validator is a new role that didn't exist previously in PoW consensus. To be able to become a validator, you need to deposit/stake 32 ETH into a Beacon Chain client. (<a href="https://launchpad.ethereum.org/en/" target="_blank">Guide</a> to get started on becoming a validator.)
+In Beacon Chain, a validator is a new role that didn't exist previously in PoW consensus. To be able to become a validator, you need to deposit/stake 32 ETH into a Beacon Chain client. (<a href="https://launchpad.ethereum.org/en/" target="_blank">Guide</a> to get started on becoming a validator.)
 
-On Beacon Chain, passage of time is organized into slots and epochs. A slot appears every 12 seconds and an epoch contains 32 slots (appears every 6.4 minutes) and it is used to create checkpoints to reach block/transaction finality which will get into it in later sections.
+On Beacon Chain, passage of time is organized into *slots* and *epochs*. A slot appears every 12 seconds and an epoch contains 32 slots (appears every 6.4 minutes) and it is used to create checkpoints to reach block/transaction <a href="https://ethereum.org/en/roadmap/single-slot-finality/#what-is-finality:~:text=In%20Ethereum%27s%20proof,from%20trying%20it." target="_blank">finality</a> which will get into it in later sections.
 
 ![slot_epoch](../image/eth2.0_basics/epoch_slots.png)
 
@@ -44,13 +44,9 @@ Next, we will dive into the role of RANDAO which is used to select block propose
 
 ## Achieving Decentralized Pseudorandomness with RANDAO
 
-_Please note that I abbreviated a lot of details that goes into the RANDAO process. I made this choice to simplify and streamline the explanation. To learn more, please refer to the <a href="https://eth2book.info/capella/part2/building_blocks/randomness/" target="_blank">in-depth explanation</a> written by Ben Edgington._
-
-<br/>
-
 On Beacon Chain, the role of RANDAO value is critical as it is used to determine the selection of committees and block proposers for each upcoming epochs.
 
-The RANDAO value goes through a series of reveal and mix process for each slot by the block proposer.  
+The RANDAO value goes through a series of *reveal* and *mix* process for each slot by the block proposer.  
 - A block proposer is revealing and mixing their RANDAO value while also proposing a block.
 - If a block proposer does not propose a block, it also does not contribute to the RANDAO value.
 
@@ -86,7 +82,7 @@ def process_randao(state: BeaconState, body: BeaconBlockBody) -> None:
 
 <br/>
 
-So to summarize, from slot 0 to 31, each block proposer reveals a RANDAO value and it fetches the previous mixed RANDAO value and does xor operation with the current revealed RANDAO value. The RANDAO value in the last slot (slot 31) or the most recent slot with proposed block in the current epoch is used to select the block proposer and committees for the next epoch. 
+So to summarize, from slot 0 to 31, each block proposer reveals a RANDAO value while proposing a block. Once the block is processed, the previous mixed RANDAO value is fetched and it does xor operation with the current revealed RANDAO value. The RANDAO value in the last slot (slot 31) or the most recent slot with proposed block in the current epoch is used to select the block proposer and committees for the next epoch. 
 
 ![randao_explanation](../image/eth2.0_basics/randao_explanation.svg)
 
@@ -94,106 +90,71 @@ Thus, the process of each block proposer revealing and mixing RANDAO value achie
 
 As always, the RANDAO process is not always perfect. We will look into a particular change that RANDAO underwent to improve the process.
 
+_To learn more about RANDAO and its intricacies, please refer to the <a href="https://eth2book.info/capella/part2/building_blocks/randomness/" target="_blank">in-depth explanation</a> written by Ben Edgington._
+
 ### RANDAO Limitation and Mitigation
 
 Let's look at a situation where Bob controls two validators that were chosen to be last two block proposers in an epoch (slot 30 and 31). Bob wants to precompute the best RANDAO value to his favor. 
 
 Bob can precompute the best RANDAO value by: 
 
-*Not proposing a block means that the RANDAO value remains unchanged* 
-
 1. Proposing a block in both slot 30 and 31.
 2. Proposing a block in slot 30 and not in slot 31 (Missing out reward in slot 31).
 3. Proposing a block in slot 31 and not in slot 30 (Missing out reward in slot 30).
 4. Not proposing a block in either slot 30 or 31 (Missing out reward in both slots).
 
-In the case for #1, it is possible that if the order of validator is flipped, the final RANDAO value can be completely different. This might be an issue if Bob's two validators becomes part of the last two block proposers again but in the flipped order. This allows Bob to precompute a completely new set of RANDAO values that can favor him.  
+*Note: Not proposing a block means that the RANDAO value remains unchanged.*
 
-However, the RANDAO limits the randomness by utilizing xor operation in the mixing process instead of hash operation to take advantage of its commutative property.
+We can see that Bob has full control of what he can do with the two validators. He can strategically choose to propose or not propose blocks. He also has the option to precompute by changing the order of his validators.
 
-Justin mentions this example in a <a href="https://github.com/ethereum/consensus-specs/pull/496" target="_blank">discussion</a> that ultimately lead to reverting the mix operation to using xor operation instead of hash. 
+Given this situation, in the previous iteration of the `process_randao` function, Bob would have maximum grinding opportunity that allowed him to generate new RANDAO values by changing the order of his validators. However, the function was improved by replacing hash with xor operation. XOR operation naturally carries commutative property which meant that the RANDAO value would be the <a href="https://notes.ethereum.org/@JustinDrake/rkPjB1_xr#:~:text=XORing%20vs%20hash,formal%20lower%20bounds." target="_blank">same</a> regardless of the order of the validators.
 
-If we refer to the function again, 
+The change happened in the following <a href="https://github.com/ethereum/consensus-specs/pull/496" target="_blank">discussion</a> that ultimately lead to reverting back to the xor operation instead of hash. 
 
-```python
-def process_randao(state: BeaconState, body: BeaconBlockBody) -> None:
-    epoch = get_current_epoch(state)
-    # Verify RANDAO reveal
-    proposer = state.validators[get_beacon_proposer_index(state)]
-    signing_root = compute_signing_root(epoch, get_domain(state, DOMAIN_RANDAO))
-    assert bls.Verify(proposer.pubkey, signing_root, body.randao_reveal)
-    # Mix in RANDAO reveal
-    mix = xor(get_randao_mix(state, epoch), hash(body.randao_reveal))
-    state.randao_mixes[epoch % EPOCHS_PER_HISTORICAL_VECTOR] = mix
-```
+The specific commit <a href="https://github.com/ethereum/consensus-specs/pull/498/commits/438c013a8ca78095c690866bad23bfb7c6e97bbb" target="_blank">commit</a> shows the change.
 
-We can see from the last two lines that the mix operation uses xor operation on previous mixed RANDAO value and the current revealed RANDAO value. (We still utilize hash operation to reduce the size of the <a href="https://eth2book.info/capella/part2/building_blocks/randomness/#updating-the-randao:~:text=Second%2C%20the%20hash,of%20BLS%20signatures" target="_blank">revealed RANDAO value</a> from 768 bits to 256 bits.) 
+![randao_xor_change](../image/eth2.0_basics/randao_change.png)
+
+We can see from the last two lines that the mix operation uses xor operation on previous mixed RANDAO value and the current revealed RANDAO value. (We still utilize hash operation to reduce the size of the <a href="https://eth2book.info/capella/part2/building_blocks/randomness/#updating-the-randao:~:text=Second%2C%20the%20hash,of%20BLS%20signatures" target="_blank">revealed RANDAO value</a> from 768 bits to 256 bits.) The change has greatly reduced the randomness that Bob could've taken advantage of to precompute new RANDAO values that can favor his validators on next epoch. 
 
 ## Supermajority
 
-The state of beacon chain is determined by attesting at least $$ 2/3 $$ of the validator's collective effective balance. Reaching this threshold is called a supermajority. This terminology is widely used to determine checkpoints 
-Given an attestation, the supermajority is the minimum number of validators that need to attest on the same block to reach finality. 
+The head of beacon chain is determined by reaching supermajority where $$ 2/3 $$ of the total validator's <a href="https://eth2book.info/capella/part2/incentives/balances/#li_2" target="_blank">effective balance</a> has attested to a particular checkpoint. This can also mean that if the attacker can control 33% of the staked Ether, it can disturb the finality of the beacon chain. 
+
 ## Attesting and Reaching Finality
 
-Validators attest to a proposed block but they also attest on checkpoints. Checkpoints,  the first proposed block in each starting epoch, act as the anchor for the current head of the chain. If a checkpoint passes, all the proposed blocks in the previous epoch and the slot where the first block is proposed also becomes valid. In a case where if a validator does not detect any checkpoint block in upcoming epochs, it will refer to last known epoch's checkpoint (starting block of that epoch) as the current head of the chain.
+Validators attest to a proposed block but they also attest on checkpoints. *Checkpoints*,  the first proposed block in each starting epoch, act as the anchor for the current head of the chain. If a checkpoint reaches supermajority, all the proposed blocks in the previous epoch and the block contained in the slot where the checkpoint attestation was held also becomes valid. In a case where if a validator does not detect any checkpoint block in upcoming epochs, it will refer to last known epoch's checkpoint (first proposed block of that epoch) as the current head of the chain.
 
 - If the current epoch's checkpoint passes, the previous checkpoint becomes *justified*.
- This is basically being in a pending state and it is waiting for the next checkpoint to be passed. Once the upcoming checkpoint passes, the previous epoch's checkpoint becomes finalized and the blocks up to where the previous checkpoint attestation occurred is considered valid. 
+ This is basically being in a pending state and it is waiting for the next checkpoint to be passed. Once the upcoming checkpoint passes, the previous epoch's checkpoint becomes *finalized* and the slot up to where the previous checkpoint attestation occurred is considered valid and reaches finality. 
 - It is possible that multiple epochs can refer to the same checkpoint as checkpoints in those epochs are still in justified state. 
-
- 
-- A checkpoint is either the proposed block in the first slot for each epoch or the most recently proposed block is called a checkpoint.
+- A checkpoint is either the proposed block in the first slot on each epoch or the most recently proposed block.
 - There always exists a checkpoint in each epoch.
-- A block can be a checkpoint for multiple epochs.
 - A checkpoint accounts for the blocks in the previous epoch which means that the checkpoint that exists in the second epoch accounts for the blocks included in the first epoch. 
-- A checkpoint that is accepted by the **supermajority** becomes *justified* and once the checkpoint that comes after also passes the supermajority, the previous checkpoint becomes *finalized*. Once the checkpoint is finalized, the consensus accepts that the proposed block up to the checkpoint is considered final.
 
-The attestation to vote on a checkpoint is called a *FFG Vote* and the attestation is done by every validator assigned under the committee. 
+The attestation to vote on a checkpoint is called a *FFG Vote* and the attestation is done by every validator. 
 
-A GHOST vote is done by individual validators that are delegated to a slot when a block is proposed. 
+A GHOST vote is done by individual validators to attest a proposed block in their designated slots. 
 
 
 This leads to two types of attestations:
 
 1. Attesting on individual block within a slot to determine the head of the chain (LMD Ghost Vote).
-2. Attesting on a checkpoint to reach finality of an epoch (FFG Vote).
+2. Attesting on a checkpoint to reach finality of a epoch (FFG Vote).
 
 ## Brief Introduction to Slashing
 
 It is vital that validators attest to the right blocks and checkpoints to reach finality. To enforce that finality is always truthful, those that attest to blocks that have reached supermajority are rewarded while those attest to untruthful blocks are punished. A truthful validator can also report a malicious validator by reading on-chain events and this is known as a <a href="https://eth2book.info/capella/part2/incentives/slashing/#the-whistleblower-reward" target="_blank">whistleblower reward</a>.
 
-A malicious validator will be slashed from their total stake thus decreasing their effective balance. Lower effective balance can lead to less voting power during attestations and less chance to be selected as a block proposer.
+A malicious validator will be slashed from their total stake thus decreasing their effective balance. Lower effective balance can lead to less influence during attestations and less chance to be selected as a block proposer.
 
-Types of slashing can include:
+List of events that are subjected to slashing can include:
 
 1. Attesting to a block that is not finalized later. 
-2. Not attesting to a block (inactivity). 
-3. Proposing to more than one block.
+2. Not attesting to a block in an assigned slot (inactivity). 
+3. Double proposal: proposing more than one block in a slot.
 
 
 ## Final Thoughts
 
-In this article, we discussed some of the major concepts in beacon chain and how it is more energy efficient than PoW. In particular, we took a peak at the RANDAO process and BLS signature scheme that is used to compute and mix RANDAO values. Lastly, we briefly went over how beacon chain reaches finality through checkpoints and the consequence to validators who attest to untruthful blocks. 
-
-This is my first time writing about consensus mechanism and I'm hoping to dive deeper into each individual section that I mentioned in this article in future articles. 
-
-
-## Sources
-
-https://ethos.dev/beacon-chain#staking-rewards-and-penalties
-
-https://launchpad.ethereum.org/en/
-
-https://cointelegraph.com/news/the-merge-brings-down-ethereum-s-network-power-consumption-by-over-99-9
-
-https://bitcoin.org/bitcoin.pdf
-
-https://consensys.io/blog/the-ethereum-2-0-beacon-chain-explained
-
-https://kb.beaconcha.in/ethereum-staking/rewards-and-penalties
-
-https://eth2book.info/capella/part2/building_blocks/randomness/
-
-https://github.com/ethereum/consensus-specs/pull/496
-
-https://ethereum.org/en/roadmap/merge/
+In this article, we discussed some of the major concepts in beacon chain and how it is more energy efficient than PoW. In particular, we took a peak at the RANDAO process and BLS signature scheme that is used to compute and mix RANDAO values. Lastly, we briefly went over how beacon chain reaches finality through checkpoints and different ways validators can be slashed. 
