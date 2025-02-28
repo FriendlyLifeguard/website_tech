@@ -22,14 +22,24 @@ const {
 	<head>
 		<BaseHead title={title} description={description} ogImage={ogImage} articleDate={articleDate} />
 		<ViewTransitions />
+		<style>
+			a {
+				text-decoration: none !important;
+			}
+			a:hover {
+				text-decoration: underline !important;
+			}
+		</style>
 	</head>
 	<body>
 		<ThemeProvider />
 		<SkipLink />
-		<Header />
-		<main id="main">
-			<slot />
-		</main>
-		<Footer />
+		<div class="mx-auto max-w-[100ch]">
+			<Header />
+			<main id="main">
+				<slot />
+			</main>
+			<Footer />
+		</div>
 	</body>
 </html>
