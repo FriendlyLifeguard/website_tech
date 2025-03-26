@@ -1,0 +1,28 @@
+---
+title: "A Sei Blockchain One Pager"
+description: "High level overview of Sei Blockchain"
+publishDate: "2025-03-25"
+tags: ["Sei", "Whitepaper"]
+draft: false
+---
+
+## Introduction
+
+As of writing this article, the [DeFi sector](https://defillama.com/) has over $$ $90B $$ locked, and the stablecoin market cap holds more than $$ $200B $$ in value. With more than 50% of the value locked in Ethereum, the capital is bottlenecked by Ethereum’s consensus, which provides limited, sequential-only transaction processing that leads to slower block building and longer transaction settlement. As a result, users trading on Ethereum wait longer for their transactions to finalize while also paying high fees per transaction. The Sei blockchain aims to overcome Ethereum’s bottleneck through its twin turbo consensus, which introduces optimistic block building and parallelized transaction processing. In this article, we will provide a high-level overview of Sei’s unique consensus and its underlying ability to deliver near-instant transaction settlement and high block throughput.
+
+## The Twin Turbo Consensus
+
+In the Cosmos SDK, after a block is approved by the consensus, its contents are used to update different parts of the state at the application level. Normally, each transaction updates the state sequentially. In Sei, this process is parallelized using dependency mapping and a directed acyclic graph (DAG) to efficiently handle storage updates and keep track of each transaction’s dependencies. Parallelization can only occur if the messages alter different keys in the key-value storage; otherwise, execution remains sequential. To ensure parallelization, developers at the contract level must correctly handle the message types they invoke. If not handled properly, it can lead to unwanted issues, such as reverted transactions or higher gas fees that bottleneck the network. There are native message types provided by the consensus, but developers can also define their own types at the contract level.
+
+Sei’s consensus also optimizes how blocks are propagated and processed at the network level. Instead of beginning block processing only after the completion of the precommit voting stage, it starts at the beginning of the prevote stage. The processed block is cached and accepted once it passes the voting stages, and discarded if the network rejects it. Through this process, Sei can achieve up to 30% faster block propagation compared to default Tendermint consensus, based on the specifications from the whitepaper.
+
+## Wrapping Up
+
+With its high-performance capabilities compared to legacy blockchains like Ethereum, Sei offers users faster transaction settlements and lower fees per transaction. It’s especially appealing for those seeking centralized exchange speeds while enjoying the benefits of DeFi protocols that provide lucrative yields. Because Sei is EVM-compatible, users can continue using the same wallets they used on Ethereum—making the entire onboarding process seamless.
+
+## References
+
+- [Sei Whitepaper](https://github.com/sei-protocol/sei-chain/blob/main/whitepaper/Sei_Whitepaper.pdf)
+- [Sei Docs](https://www.docs.sei.io/)
+- [Tendermint Docs](https://docs.tendermint.com/master/introduction/what-is-tendermint.html#)
+- [Cosmos SDK Docs](https://docs.cosmos.network/v0.46/intro/overview.html)
