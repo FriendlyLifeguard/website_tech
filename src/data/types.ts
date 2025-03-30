@@ -8,6 +8,7 @@ export type SiteConfig = {
 		locale: string | string[] | undefined;
 		options: Intl.DateTimeFormatOptions;
 	};
+	ogImage: string;
 };
 
 export type PaginationLink = {
@@ -18,7 +19,7 @@ export type PaginationLink = {
 
 export type SiteMeta = {
 	title: string;
-	description?: string;
+	description?: string | undefined;
 	ogImage?: string | undefined;
 	articleDate?: string | undefined;
 };
